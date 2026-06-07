@@ -17,9 +17,9 @@ for (const file of files) {
   if (file.endsWith('package.json')) JSON.parse(content);
 }
 
-const page = await readFile('frontend/app/page.tsx', 'utf8');
+const dashboard = await readFile('frontend/app/components/Dashboard.tsx', 'utf8');
 for (const required of ['Assign', 'Submit', 'isAdmin', 'assignedAt', 'submittedAt']) {
-  if (!page.includes(required)) throw new Error(`Missing expected UI term: ${required}`);
+  if (!dashboard.includes(required)) throw new Error(`Missing expected UI term: ${required}`);
 }
 
 console.log('Source sanity check passed.');

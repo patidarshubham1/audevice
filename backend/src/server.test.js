@@ -79,4 +79,49 @@ test('dashboard, assignment, and submission flow', async () => {
   assert.equal(refreshedPayload.devices[0].assignedTo, null);
   assert.equal(refreshedPayload.devices[0].assignedAt, null);
   assert.equal(refreshedPayload.devices[0].submittedAt, null);
+
+  const addedDevice = await fetch(`${baseUrl}/api/devices`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'test-token' },
+    body: JSON.stringify({ name: 'Pixel Test', platform: 'Android', identifier: 'ANDROID-T' })
+  });
+  assert.equal(addedDevice.status, 201);
+  const addedPayload = await addedDevice.json();
+  const newDevice = addedPayload.devices.find((device) => device.identifier === 'ANDROID-T');
+  assert.equal(newDevice.status, 'available');
+  assert.equal(newDevice.assignedTo, null);
+
+  const editedDevice = await fetch(`${baseUrl}/api/devices/${newDevice.id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'test-token' },
+    body: JSON.stringify({ name: 'Pixel Edited', platform: 'Android', identifier: 'ANDROID-T2' })
+  });
+  assert.equal(editedDevice.status, 200);
+  const editedPayload = await editedDevice.json();
+  assert.equal(editedPayload.devices.find((device) => device.id === newDevice.id).name, 'Pixel Edited');
+
+  const assignedAgain = await fetch(`${baseUrl}/api/devices/${newDevice.id}/assign`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'test-token' },
+    body: JSON.stringify({ personId: 'p1' })
+  });
+  assert.equal(assignedAgain.status, 200);
+
+  const deletedPerson = await fetch(`${baseUrl}/api/people/p1`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'test-token' }
+  });
+  assert.equal(deletedPerson.status, 200);
+  const deletedPersonPayload = await deletedPerson.json();
+  assert.equal(deletedPersonPayload.people.length, 0);
+  assert.equal(deletedPersonPayload.devices.find((device) => device.id === newDevice.id).assignedTo, null);
+
+  const deletedDevice = await fetch(`${baseUrl}/api/devices/${newDevice.id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'test-token' }
+  });
+  assert.equal(deletedDevice.status, 200);
+  const deletedDevicePayload = await deletedDevice.json();
+  assert.equal(deletedDevicePayload.devices.some((device) => device.id === newDevice.id), false);
+
 });
