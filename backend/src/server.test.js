@@ -67,4 +67,16 @@ test('dashboard, assignment, and submission flow', async () => {
   const submittedPayload = await submitted.json();
   assert.equal(submittedPayload.devices[0].status, 'submitted');
   assert.ok(submittedPayload.devices[0].submittedAt);
+
+  const refreshed = await fetch(`${baseUrl}/api/dashboard/refresh`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': 'test-token' },
+    body: JSON.stringify({})
+  });
+  assert.equal(refreshed.status, 200);
+  const refreshedPayload = await refreshed.json();
+  assert.equal(refreshedPayload.devices[0].status, 'available');
+  assert.equal(refreshedPayload.devices[0].assignedTo, null);
+  assert.equal(refreshedPayload.devices[0].assignedAt, null);
+  assert.equal(refreshedPayload.devices[0].submittedAt, null);
 });
