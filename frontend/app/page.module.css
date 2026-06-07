@@ -118,7 +118,7 @@
 
 .glassPanel input,
 .glassPanel select,
-td select {
+.tableWrap td select {
   width: 100%;
   min-height: 46px;
   margin-bottom: 12px;
@@ -130,7 +130,7 @@ td select {
   outline: none;
 }
 
-button {
+.shell button {
   border: 0;
   border-radius: 16px;
   padding: 12px 18px;
@@ -156,12 +156,12 @@ button {
 .readOnly { display: inline-flex; gap: 8px; align-items: center; color: var(--au-purple); font-weight: 800; }
 
 .tableWrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 880px; }
-th { text-align: left; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
-th, td { padding: 16px 12px; border-bottom: 1px solid rgba(75, 21, 95, 0.1); }
-td strong, td span, td small { display: block; }
-td > span, td small { margin-top: 4px; color: var(--muted); }
-td select { margin: 0; max-width: 220px; }
+.tableWrap table { width: 100%; border-collapse: collapse; min-width: 880px; }
+.tableWrap th { text-align: left; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.tableWrap th, .tableWrap td { padding: 16px 12px; border-bottom: 1px solid rgba(75, 21, 95, 0.1); }
+.tableWrap td strong, .tableWrap td span, .tableWrap td small { display: block; }
+.tableWrap td > span, .tableWrap td small { margin-top: 4px; color: var(--muted); }
+.tableWrap td select { margin: 0; max-width: 220px; }
 
 .badge {
   display: inline-flex;
