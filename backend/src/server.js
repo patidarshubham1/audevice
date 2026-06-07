@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { readState, updateState } from './store.js';
 
 const PORT = process.env.PORT || 4000;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'au-admin-demo';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'auadmin@1234';
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
 
 function send(res, statusCode, payload) {
@@ -54,6 +54,22 @@ async function handle(req, res) {
   }
   if (req.method === 'GET' && url.pathname === '/api/dashboard') {
     const state = await readState();
+    return send(res, 200, dashboardPayload(state));
+  }
+
+
+  if (req.method === 'PATCH' && url.pathname === '/api/dashboard/refresh') {
+    requireAdmin(req);
+    const state = await updateState((draft) => {
+      draft.devices = draft.devices.map((device) => ({
+        ...device,
+        status: 'available',
+        assignedTo: null,
+        assignedAt: null,
+        submittedAt: null
+      }));
+      return draft;
+    });
     return send(res, 200, dashboardPayload(state));
   }
 

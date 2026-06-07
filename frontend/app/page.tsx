@@ -19,7 +19,7 @@ type Device = {
 type Dashboard = { people: Person[]; devices: Device[] };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-const ADMIN_TOKEN = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'au-admin-demo';
+const ADMIN_TOKEN = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'auadmin@1234';
 
 function formatTime(value: string | null) {
   if (!value) return '—';
@@ -44,7 +44,9 @@ async function request(path: string, options: RequestInit = {}) {
 
 export default function Home() {
   const [dashboard, setDashboard] = useState<Dashboard>({ people: [], devices: [] });
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [hasEntered, setHasEntered] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminKey, setAdminKey] = useState('');
   const [personName, setPersonName] = useState('');
   const [deviceName, setDeviceName] = useState('');
   const [deviceId, setDeviceId] = useState('');
@@ -59,12 +61,39 @@ export default function Home() {
   );
 
   useEffect(() => {
-    request('/api/dashboard')
-      .then(setDashboard)
-      .catch((error) => setMessage(error.message));
-  }, []);
+    if (!hasEntered) return;
+    loadDashboard();
+  }, [hasEntered]);
 
-  async function mutate(path: string, body: unknown, method = 'POST') {
+  async function loadDashboard() {
+    setLoading(true);
+    setMessage('');
+    try {
+      const data = await request('/api/dashboard');
+      setDashboard(data);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function login(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const key = adminKey.trim();
+    setHasEntered(true);
+    setIsAdmin(key === ADMIN_TOKEN);
+    setMessage(key === ADMIN_TOKEN ? 'Admin dashboard unlocked.' : 'Invalid admin key. Continuing with view access only.');
+  }
+
+  function enterViewMode() {
+    setHasEntered(true);
+    setIsAdmin(false);
+    setAdminKey('');
+    setMessage('View access only.');
+  }
+
+  async function mutate(path: string, body: unknown, method = 'POST', successMessage = 'Updated successfully.') {
     setLoading(true);
     setMessage('');
     try {
@@ -74,7 +103,7 @@ export default function Home() {
         headers: { 'x-admin-token': ADMIN_TOKEN }
       });
       setDashboard(data);
-      setMessage('Updated successfully.');
+      setMessage(successMessage);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Something went wrong.');
     } finally {
@@ -110,61 +139,76 @@ export default function Home() {
     mutate(`/api/devices/${device.id}/submit`, {}, 'PATCH');
   }
 
+  function morningRefresh() {
+    mutate('/api/dashboard/refresh', {}, 'PATCH', 'Morning refresh complete. Assignments are reset for today.');
+  }
+
+  if (!hasEntered) {
+    return (
+      <main className={`${styles.shell} ${styles.loginShell}`}>
+        <section className={styles.loginCard}>
+          <div className={styles.loginIntro}>
+            <p className={styles.eyebrow}>AU Device Desk</p>
+            <h1>Enter admin key</h1>
+            <p>Use the admin key to manage devices, or continue from the side with view access only.</p>
+          </div>
+
+          <form className={styles.loginForm} onSubmit={login}>
+            <input
+              autoFocus
+              value={adminKey}
+              onChange={(event) => setAdminKey(event.target.value)}
+              placeholder="Admin key"
+              type="password"
+            />
+            <button disabled={!adminKey.trim()}>Login</button>
+          </form>
+
+          <aside className={styles.viewAccessCard}>
+            <span>View access only</span>
+            <p>No key is needed to read the device board.</p>
+            <button type="button" onClick={enterViewMode}>Continue as viewer</button>
+          </aside>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className={styles.shell}>
-      <section className={styles.hero}>
-        <div>
-          <p className={styles.eyebrow}>AU Small Finance Bank inspired device desk</p>
-          <h1>Morning testing-device assignment for React Native teams.</h1>
-          <p className={styles.subcopy}>
-            Add people and Android/iOS devices, assign a device to one engineer, then submit when the
-            hand-off is complete. Everyone can view; only admins can change status.
-          </p>
-        </div>
-        <div className={styles.brandCard} aria-label="AU theme badge">
-          <span>AU</span>
-          <small>Device Assignee</small>
-        </div>
-      </section>
+      <header className={styles.singleHeader}>
+        <h1>AU Device Assignment Dashboard</h1>
+        <span>{isAdmin ? 'Admin' : 'View only'}</span>
+      </header>
 
       <section className={styles.statsGrid}>
         <article className={styles.statCard}><span className={styles.icon}>📱</span> <span>{dashboard.devices.length}</span><p>Total devices</p></article>
         <article className={styles.statCard}><span className={styles.icon}>👥</span> <span>{dashboard.people.length}</span><p>Team members</p></article>
         <article className={styles.statCard}><span className={styles.icon}>⏱️</span> <span>{assignedCount}</span><p>Currently assigned</p></article>
-        <article className={styles.statCard}><span className={styles.icon}>🛡️</span> <span>{isAdmin ? 'Admin' : 'View'}</span><p>Current mode</p></article>
       </section>
 
-      <section className={styles.toolbar}>
-        <div>
-          <h2>Access mode</h2>
-          <p>{isAdmin ? 'Admin controls are enabled.' : 'Viewer mode: assignments are read-only.'}</p>
-        </div>
-        <label className={styles.switch}>
-          <input type="checkbox" checked={isAdmin} onChange={(event) => setIsAdmin(event.target.checked)} />
-          <span>{isAdmin ? 'Admin' : 'Viewer'}</span>
-        </label>
-      </section>
+      {isAdmin && (
+        <section className={styles.formsGrid}>
+          <form className={styles.glassPanel} onSubmit={addPerson}>
+            <h2><span className={styles.icon}>＋</span> Add person</h2>
+            <input value={personName} onChange={(event) => setPersonName(event.target.value)} placeholder="Person name" />
+            <button disabled={loading}>Add to list</button>
+          </form>
 
-      <section className={styles.formsGrid}>
-        <form className={styles.glassPanel} onSubmit={addPerson}>
-          <h2><span className={styles.icon}>＋</span> Add person</h2>
-          <input disabled={!isAdmin} value={personName} onChange={(event) => setPersonName(event.target.value)} placeholder="Person name" />
-          <button disabled={!isAdmin || loading}>Add to list</button>
-        </form>
-
-        <form className={styles.glassPanel} onSubmit={addDevice}>
-          <h2><span className={styles.icon}>💻</span> Add device</h2>
-          <div className={styles.inlineFields}>
-            <input disabled={!isAdmin} value={deviceName} onChange={(event) => setDeviceName(event.target.value)} placeholder="Device name" />
-            <select disabled={!isAdmin} value={platform} onChange={(event) => setPlatform(event.target.value as 'Android' | 'iOS')}>
-              <option>Android</option>
-              <option>iOS</option>
-            </select>
-          </div>
-          <input disabled={!isAdmin} value={deviceId} onChange={(event) => setDeviceId(event.target.value)} placeholder="Asset ID / serial" />
-          <button disabled={!isAdmin || loading}>Add device</button>
-        </form>
-      </section>
+          <form className={styles.glassPanel} onSubmit={addDevice}>
+            <h2><span className={styles.icon}>💻</span> Add device</h2>
+            <div className={styles.inlineFields}>
+              <input value={deviceName} onChange={(event) => setDeviceName(event.target.value)} placeholder="Device name" />
+              <select value={platform} onChange={(event) => setPlatform(event.target.value as 'Android' | 'iOS')}>
+                <option>Android</option>
+                <option>iOS</option>
+              </select>
+            </div>
+            <input value={deviceId} onChange={(event) => setDeviceId(event.target.value)} placeholder="Asset ID / serial" />
+            <button disabled={loading}>Add device</button>
+          </form>
+        </section>
+      )}
 
       {message && <p className={styles.message}>{message}</p>}
 
@@ -174,7 +218,11 @@ export default function Home() {
             <p className={styles.eyebrow}>Device list</p>
             <h2>Assign, then submit</h2>
           </div>
-          {!isAdmin && <span className={styles.readOnly}><span>🔒</span> Read only</span>}
+          <div className={styles.boardActions}>
+            {!isAdmin && <span className={styles.readOnly}><span>🔒</span> Read only</span>}
+            {isAdmin && <button type="button" onClick={morningRefresh} disabled={loading}>Morning refresh</button>}
+            <button type="button" className={styles.secondaryButton} onClick={loadDashboard} disabled={loading}>Reload</button>
+          </div>
         </div>
 
         <div className={styles.tableWrap}>
@@ -190,7 +238,11 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              {dashboard.devices.map((device) => (
+              {dashboard.devices.length === 0 ? (
+                <tr>
+                  <td className={styles.emptyState} colSpan={6}>No devices yet. Admin can add devices after login.</td>
+                </tr>
+              ) : dashboard.devices.map((device) => (
                 <tr key={device.id}>
                   <td>
                     <strong>{device.name}</strong>

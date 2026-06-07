@@ -3,36 +3,108 @@
   z-index: 1;
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 42px 0 56px;
+  padding: 28px 0 56px;
 }
 
-.hero,
-.toolbar,
+.singleHeader,
+.loginCard,
+.viewAccessCard,
 .glassPanel,
 .deviceBoard,
 .statCard {
   border: 1px solid var(--border);
-  background: var(--glass);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.48));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(22px) saturate(1.3);
 }
 
-.hero {
+.loginShell {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 28px;
-  align-items: center;
-  border-radius: 34px;
-  padding: 34px;
-  overflow: hidden;
+  min-height: 100vh;
+  place-items: center;
+  padding: 32px 0;
 }
 
-.hero h1 {
-  max-width: 820px;
+.loginCard {
+  display: grid;
+  grid-template-columns: 1.1fr minmax(260px, 0.8fr);
+  gap: 24px;
+  width: min(900px, 100%);
+  border-radius: 34px;
+  padding: 28px;
+}
+
+.loginIntro,
+.loginForm {
+  grid-column: 1;
+}
+
+.loginIntro h1 {
   margin: 0;
-  font-size: clamp(2.25rem, 5vw, 4.65rem);
+  font-size: clamp(2.5rem, 7vw, 5rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
+}
+
+.loginIntro p:not(.eyebrow) {
+  max-width: 520px;
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.65;
+}
+
+.loginForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-self: end;
+}
+
+.viewAccessCard {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 28px;
+  padding: 24px;
+  background: linear-gradient(145deg, rgba(75, 21, 95, 0.14), rgba(245, 130, 32, 0.12));
+}
+
+.viewAccessCard span {
+  color: var(--au-purple);
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.viewAccessCard p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.singleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-radius: 999px;
+  padding: 16px 22px;
+}
+
+.singleHeader h1 {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 1.9rem);
+  letter-spacing: -0.04em;
+}
+
+.singleHeader span {
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: var(--au-purple);
+  background: rgba(255, 255, 255, 0.58);
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .eyebrow {
@@ -43,39 +115,17 @@
   text-transform: uppercase;
 }
 
-.subcopy {
-  max-width: 760px;
-  color: var(--muted);
-  font-size: 1.08rem;
-  line-height: 1.7;
-}
-
-.brandCard {
-  display: grid;
-  place-items: center;
-  width: 190px;
-  height: 190px;
-  border-radius: 50%;
-  color: white;
-  background: linear-gradient(145deg, var(--au-purple), var(--au-orange));
-  box-shadow: inset 0 0 0 12px rgba(255, 255, 255, 0.16), 0 24px 50px rgba(75, 21, 95, 0.28);
-}
-
-.brandCard span { font-size: 4.3rem; font-weight: 900; line-height: 1; }
-.brandCard small { margin-top: -40px; font-weight: 700; }
-
 .statsGrid,
 .formsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
   margin-top: 20px;
 }
 
+.statsGrid { grid-template-columns: repeat(3, 1fr); }
 .formsGrid { grid-template-columns: 0.9fr 1.1fr; }
 
 .statCard,
-.toolbar,
 .glassPanel,
 .deviceBoard { border-radius: 26px; }
 
@@ -84,50 +134,54 @@
 .statCard span { display: block; margin-top: 12px; font-size: 2rem; font-weight: 900; }
 .statCard p { margin: 4px 0 0; color: var(--muted); }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 20px;
-  padding: 22px 26px;
-}
-
-.toolbar h2,
+.glassPanel { padding: 24px; }
 .glassPanel h2,
 .deviceBoard h2 { margin: 0; }
-.toolbar p { margin: 6px 0 0; color: var(--muted); }
-
-.switch {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(75, 21, 95, 0.08);
-  color: var(--au-purple);
-  font-weight: 800;
-}
-.switch input { width: 22px; height: 22px; accent-color: var(--au-orange); }
-
-.glassPanel { padding: 24px; }
 .glassPanel h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-
 
 .inlineFields { display: grid; grid-template-columns: 1fr 150px; gap: 12px; }
 
+.loginForm input,
 .glassPanel input,
 .glassPanel select,
 .tableWrap td select {
   width: 100%;
-  min-height: 46px;
+  min-height: 48px;
   margin-bottom: 12px;
-  border: 1px solid rgba(75, 21, 95, 0.16);
-  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 18px;
   padding: 0 14px;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.74);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.48)),
+    rgba(255, 255, 255, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72), 0 12px 24px rgba(75, 21, 95, 0.08);
   outline: none;
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.loginForm input:focus,
+.glassPanel input:focus,
+.glassPanel select:focus,
+.tableWrap td select:focus {
+  border-color: rgba(245, 130, 32, 0.7);
+  box-shadow: 0 0 0 4px rgba(245, 130, 32, 0.16), 0 12px 24px rgba(75, 21, 95, 0.08);
+}
+
+.glassPanel select,
+.tableWrap td select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--au-purple) 50%),
+    linear-gradient(135deg, var(--au-purple) 50%, transparent 50%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.48));
+  background-position:
+    calc(100% - 20px) 21px,
+    calc(100% - 14px) 21px,
+    0 0;
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-repeat: no-repeat;
+  padding-right: 42px;
 }
 
 .shell button {
@@ -138,6 +192,12 @@
   font-weight: 900;
   background: linear-gradient(135deg, var(--au-orange), var(--au-purple));
   box-shadow: 0 12px 28px rgba(245, 130, 32, 0.28);
+}
+
+.secondaryButton {
+  color: var(--au-purple) !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+  box-shadow: inset 0 0 0 1px rgba(75, 21, 95, 0.12) !important;
 }
 
 .submitButton { background: linear-gradient(135deg, var(--au-purple), var(--au-purple-2)); }
@@ -153,6 +213,7 @@
 
 .deviceBoard { margin-top: 20px; padding: 26px; }
 .boardHeader { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-bottom: 18px; }
+.boardActions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
 .readOnly { display: inline-flex; gap: 8px; align-items: center; color: var(--au-purple); font-weight: 800; }
 
 .tableWrap { overflow-x: auto; }
@@ -162,6 +223,7 @@
 .tableWrap td strong, .tableWrap td span, .tableWrap td small { display: block; }
 .tableWrap td > span, .tableWrap td small { margin-top: 4px; color: var(--muted); }
 .tableWrap td select { margin: 0; max-width: 220px; }
+.emptyState { color: var(--muted); font-weight: 800; text-align: center; }
 
 .badge {
   display: inline-flex;
@@ -176,13 +238,16 @@
 .submitted { color: #4b155f; background: rgba(75, 21, 95, 0.15); }
 
 @media (max-width: 900px) {
-  .hero, .toolbar { grid-template-columns: 1fr; }
-  .hero { display: block; }
-  .brandCard { margin-top: 22px; width: 150px; height: 150px; }
+  .loginCard { grid-template-columns: 1fr; }
+  .loginIntro,
+  .loginForm,
+  .viewAccessCard { grid-column: auto; grid-row: auto; }
   .statsGrid, .formsGrid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 640px) {
-  .statsGrid, .formsGrid, .inlineFields { grid-template-columns: 1fr; }
-  .toolbar, .boardHeader { align-items: flex-start; flex-direction: column; }
+  .statsGrid, .formsGrid, .inlineFields, .loginForm { grid-template-columns: 1fr; }
+  .singleHeader, .boardHeader { align-items: flex-start; flex-direction: column; }
+  .singleHeader { border-radius: 24px; }
+  .boardActions { justify-content: flex-start; }
 }
