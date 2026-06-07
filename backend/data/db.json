@@ -1,0 +1,31 @@
+{
+  "people": [
+    { "id": "person-admin", "name": "Admin User", "createdAt": "2026-06-07T08:00:00.000Z" },
+    { "id": "person-rahul", "name": "Rahul Sharma", "createdAt": "2026-06-07T08:05:00.000Z" },
+    { "id": "person-priya", "name": "Priya Mehta", "createdAt": "2026-06-07T08:10:00.000Z" }
+  ],
+  "devices": [
+    {
+      "id": "device-iphone-15",
+      "name": "iPhone 15 Pro",
+      "platform": "iOS",
+      "identifier": "iOS-001",
+      "status": "available",
+      "assignedTo": null,
+      "assignedAt": null,
+      "submittedAt": null,
+      "createdAt": "2026-06-07T08:00:00.000Z"
+    },
+    {
+      "id": "device-pixel-8",
+      "name": "Google Pixel 8",
+      "platform": "Android",
+      "identifier": "AND-001",
+      "status": "available",
+      "assignedTo": null,
+      "assignedAt": null,
+      "submittedAt": null,
+      "createdAt": "2026-06-07T08:00:00.000Z"
+    }
+  ]
+}

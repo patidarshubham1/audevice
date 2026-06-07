@@ -1,0 +1,17 @@
+{
+  "name": "au-device-assignee",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Device assignment dashboard with Next.js frontend and Node.js backend.",
+  "scripts": {
+    "dev": "npm run dev --workspace backend & npm run dev --workspace frontend & wait",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run start --workspace backend",
+    "lint": "node scripts/check-source.mjs",
+    "test": "npm run test --workspace backend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
