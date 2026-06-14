@@ -20,7 +20,7 @@ type Device = {
 type DashboardData = { people: Person[]; devices: Device[] };
 type EditableDevice = { id: string; name: string; platform: 'Android' | 'iOS'; identifier: string };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = 'https://audevice.onrender.com'
 const ADMIN_TOKEN = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'auadmin@1234';
 const SESSION_KEY = 'au-device-access';
 
