@@ -86,6 +86,7 @@ export default function Dashboard({ mode }: { mode: 'admin' | 'viewer' }) {
     setLoading(true);
     setMessage('');
     try {
+      console.log("mutate me aaya")
       const data = await request(path, {
         method,
         body: JSON.stringify(body),
@@ -96,6 +97,7 @@ export default function Dashboard({ mode }: { mode: 'admin' | 'viewer' }) {
       setMessage(successMessage);
       return true;
     } catch (error) {
+      console.log("error",error)
       setMessage(error instanceof Error ? error.message : 'Something went wrong.');
       return false;
     } finally {
